@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="h2so4.css" />
 </head>
 <body>
-
+ 
 <!-- ── MAIN ── -->
 <div class="page-header-wrap">
   <div class="page-header">
@@ -28,7 +28,7 @@
   <div class="left-col">
     <div class="card">
       <div style="display:flex;flex-direction:column;gap:20px;">
-
+ 
         <!-- Ulazni podaci -->
         <section class="section">
           <h2>Ulazni podaci</h2>
@@ -45,9 +45,9 @@
             </div>
           </div>
         </section>
-
+ 
         <hr class="section-divider" />
-
+ 
         <!-- pH parametri -->
         <section class="section">
           <h2>pH parametri</h2>
@@ -64,9 +64,9 @@
             </div>
           </div>
         </section>
-
+ 
         <hr class="section-divider" />
-
+ 
         <!-- Svojstva proizvoda i vode -->
         <section class="section">
           <h2>Svojstva proizvoda i vode</h2>
@@ -85,7 +85,7 @@
               </div>
             </div>
           </div>
-
+ 
           <div class="factor-grid">
             <div class="factor-chip">
               <div class="fc-label">ΔpH</div>
@@ -104,13 +104,13 @@
               <div class="fc-value" id="chipK">0,336</div>
             </div>
           </div>
-
+ 
           <div class="info-box" style="align-items:flex-start;flex-direction:column;gap:6px;">
             <span>Model je empirijski i najtočniji za TA 80–140 ppm.</span>
             <span>Za druge koncentracije koristi skaliranje 36/%.</span>
           </div>
         </section>
-
+ 
         <!-- Actions -->
         <div class="actions">
           <button class="btn-calc" onclick="izracunaj()">Izračunaj</button>
@@ -129,10 +129,10 @@
             <span class="badge" id="statusBadge">Spremno</span>
           </div>
         </div>
-
+ 
       </div>
     </div>
-
+ 
     <!-- Hidden: Napomena / Formula -->
     <div class="hidden" id="detailsNapomena">
       <div class="card">
@@ -146,16 +146,16 @@
         </div>
       </div>
     </div>
-
+ 
   </div>
-
+ 
   <!-- ── RIGHT COLUMN ── -->
   <div class="right-col">
-
+ 
     <!-- Results dark card -->
     <div class="dark-card">
       <div class="results-label">Rezultati izračuna</div>
-
+ 
       <div class="result-row">
         <span class="rk">Volumen bazena</span>
         <span class="rv" id="mVolumen">–</span>
@@ -168,7 +168,7 @@
         </div>
       </div>
     </div>
-
+ 
     <!-- Catalog card -->
     <div class="card catalog-card">
       <div class="catalog-header">
@@ -189,7 +189,7 @@
         </button>
       </div>
     </div>
-
+ 
     <!-- Hidden: Detaljna tablica -->
     <div class="hidden" id="detailsTablica">
       <div class="card">
@@ -202,10 +202,10 @@
         </div>
       </div>
     </div>
-
+ 
   </div>
 </main>
-
+ 
 <script src="h2so4.js"></script>
 <footer class="disclaimer">
   Prikazani rezultat je empirijska aproksimacija i služi kao informativna preporuka doziranja. Nakon doziranja pričekajte cirkulaciju i ponovno izmjerite pH prije daljnjeg podešavanja.
