@@ -2,7 +2,7 @@
   /*
     Formule i konstante preuzete izravno iz priloženog Excel kalkulatora
     "Kalkulator_doziranja_sumporne_kiseline.xlsx" (list "H2SO4 pH Calculator"):
-
+ 
       ΔpH               = Početni pH − Ciljni pH                              (B9 = B4-B5)
       Faktor temperature f_t = MAX(0.9, MIN(1.1, 1 − 0.004×(T − 25)))          (B10)
       Faktor alkalnosti f_TA = TA / 100                                        (B11)
@@ -12,23 +12,23 @@
                           stoga je u kodu korištena jedinstvena formula
                           K = 0,14 × (36 / c))
       Potrebna količina kiseline [L] = K × V_b × ΔpH × f_t × f_TA              (B14)
-
+ 
     Napomena iz Excela (K3): "Model je empirijski i najtočniji za TA 80–140 ppm."
     Napomena iz Excela (K4): "Za druge koncentracije koristi skaliranje 36/%."
-
+ 
     Padajući izbornici (Temperatura, Ciljni pH, Koncentracija, TA) odgovaraju
     popisima za provjeru valjanosti podataka iz izvornog Excel lista (stupci E, H, G, F).
-
+ 
     NAPOMENA: Katalog pakiranja ("Ovo se treba definirati.") je namjerno
     prikazan kao placeholder jer stvarni IVAPOOL katalog pakiranja sumporne
     kiseline nije bio priložen — isto kao u kalkulatoru pH Minus granulata.
   */
-
+ 
   const $=id=>document.getElementById(id);
   const num=id=>parseFloat($(id).value)||0;
   const val=id=>$(id).value.trim();
   const fmt=(v,d=2)=>new Intl.NumberFormat('hr-HR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(v);
-
+ 
   /* ── POPULATE DROPDOWNS (iz Excel popisa za provjeru valjanosti) ── */
   function populateSelect(id, values, decimals, defaultVal){
     const sel = $(id);
@@ -46,17 +46,17 @@
   populateSelect('ciljniPh', rangeArr(6.8,7.4,0.1), 1, 7.2);
   populateSelect('koncentracija', rangeArr(10,36,1), 0, 15);
   populateSelect('alkalnostTA', rangeArr(50,150,10), 0, 70);
-
+ 
   /* ── FAKTOR TEMPERATURE (Excel B10) ── */
   function tempFactor(t){
     return Math.max(0.9, Math.min(1.1, 1 - 0.004*(t-25)));
   }
-
+ 
   /* ── KONSTANTA K (Excel B12) ── */
   function constantK(c){
     return 0.14 * (36/c);
   }
-
+ 
   /* ── LIVE FACTOR CHIPS ── */
   function updateFactorChips(){
     const pocetni = num('pocetniPh');
@@ -73,7 +73,7 @@
     $('chipFta').textContent = fmt(fta,2);
     $('chipK').textContent = fmt(K,3);
   }
-
+ 
   /* ── STATUS ── */
   function setStatus(text, badge='Gotovo'){
     const el = $('statusBadge');
@@ -87,7 +87,7 @@
       el.title = text;
     }
   }
-
+ 
   /* ── BLINK VALIDATION ── */
   function oznaciPraznaPolja(){
     let prazno=false;
@@ -101,10 +101,10 @@
     });
     return prazno;
   }
-
+ 
   /* ── RENDER ROWS ── */
   function renderRows(rows){ document.querySelector('#rezultatTablica tbody').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join(''); }
-
+ 
   /* ── RENDER CATALOG ──
      Preporuka konkretnog pakiranja je isključena dok se ne definira
      stvarni IVAPOOL katalog pakiranja. Kutija ostaje vidljiva kao
@@ -112,24 +112,24 @@
   function renderCatalog(requiredL, selected){
     $('catalogBody').innerHTML = '<div style="padding:20px 8px;text-align:center;font-size:13px;color:var(--muted);">Ovo se treba definirati.</div>';
   }
-
+ 
   /* ── IZRAČUNAJ ── */
   function izracunaj(){ try{
     if(oznaciPraznaPolja()){ setStatus('Neka polja nisu unesena!','Greška'); return; }
-
+ 
     const volumen = num('volumenBazena');
     if(volumen<=0) throw new Error('Unesi volumen bazena.');
-
+ 
     const pocetniPh = num('pocetniPh');
     if(pocetniPh<=0) throw new Error('Unesi početni pH.');
-
+ 
     const ciljniPh = parseFloat(val('ciljniPh'));
     const temperaturaVode = parseFloat(val('temperaturaVode'));
     const koncentracija = parseFloat(val('koncentracija'));
     const alkalnostTA = parseFloat(val('alkalnostTA'));
-
+ 
     if(ciljniPh>=pocetniPh) throw new Error('Ciljni pH mora biti niži od početnog pH.');
-
+ 
     /* ── FORMULE (identične Excel listu "H2SO4 pH Calculator") ── */
     const deltaPh = pocetniPh - ciljniPh;                               // B9
     const ft = tempFactor(temperaturaVode);                             // B10
@@ -137,10 +137,10 @@
     const K = constantK(koncentracija);                                 // B12
     const kolicinaL = K * volumen * deltaPh * ft * fta;                 // B14
     const kolicinaMl = kolicinaL * 1000;
-
+ 
     $('mVolumen').textContent = `${fmt(volumen,1)} m³`;
     $('mLitri').textContent = `${fmt(kolicinaL,3)}`;
-
+ 
     $('formulaBox').innerHTML = `<strong>Primijenjena formula</strong><br><br>`
       +`V<sub>kiselina</sub> [L] = K × V<sub>b</sub> × ΔpH × f<sub>t</sub> × f<sub>TA</sub><br><br>`
       +`Volumen bazena V<sub>b</sub> = <strong>${fmt(volumen,1)} m³</strong><br>`
@@ -150,9 +150,8 @@
       +`Faktor alkalnosti f<sub>TA</sub> (TA ${fmt(alkalnostTA,0)} ppm) = TA/100 = <strong>${fmt(fta,2)}</strong><br>`
       +`Koncentracija H₂SO₄ c = <strong>${fmt(koncentracija,0)} %</strong><br>`
       +`Konstanta K = 0,14 × (36 / c) = <strong>${fmt(K,3)}</strong><br><br>`
-      +`Potrebna količina V = <strong>${fmt(kolicinaL,3)} L</strong> (= ${fmt(kolicinaMl,0)} mL)<br><br>`
-      +`<em>Napomena: model je empirijski i najtočniji za TA 80–140 ppm. Za druge koncentracije koristi skaliranje 36/%.</em>`;
-
+      +`Potrebna količina V = <strong>${fmt(kolicinaL,3)} L</strong> (= ${fmt(kolicinaMl,0)} mL)`;
+ 
     renderRows([
       ['Volumen bazena (V_b)',`${fmt(volumen,1)} m³`],
       ['Temperatura vode',`${fmt(temperaturaVode,0)} °C`],
@@ -168,12 +167,12 @@
       ['Potrebna količina kiseline (mL)',`${fmt(kolicinaMl,0)} mL`],
       ['Preporučeno pakiranje','Ovo se treba definirati.'],
     ]);
-
+ 
     renderCatalog(kolicinaL, null);
     updateFactorChips();
     setStatus('Izračun je dovršen.','Gotovo');
   }catch(err){ setStatus(err.message||'Došlo je do pogreške.','Greška'); } }
-
+ 
   /* ── UČITAJ PRIMJER ── */
   function ucitajPrimjer(){
     $('volumenBazena').value=42;
@@ -186,7 +185,7 @@
     renderCatalog(null,null);
     setStatus('Učitani su primjerni podaci.','Spremno');
   }
-
+ 
   /* ── OČISTI SVE ── */
   function ocistiSve(){
     $('volumenBazena').value='';
@@ -202,7 +201,7 @@
     updateFactorChips();
     setStatus('Polja su očišćena.','Spremno');
   }
-
+ 
   /* ── TOGGLE DETALJI ── */
   function toggleDetalji(){
     ['detailsNapomena','detailsTablica'].forEach(id=>{
@@ -210,14 +209,14 @@
       if(el) el.classList.toggle('hidden');
     });
   }
-
+ 
   /* ── EVENT LISTENERS ── */
   $('temperaturaVode').addEventListener('change', updateFactorChips);
   $('ciljniPh').addEventListener('change', updateFactorChips);
   $('koncentracija').addEventListener('change', updateFactorChips);
   $('alkalnostTA').addEventListener('change', updateFactorChips);
   $('pocetniPh').addEventListener('input', updateFactorChips);
-
+ 
   /* ── INIT ── */
   updateFactorChips();
   renderCatalog(null, null);
