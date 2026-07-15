@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IVAPOOL Kalkulator Doziranja Sumporne Kiseline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#1D1D1F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="IVAPOOL" />
+  <link rel="stylesheet" href="h2so4.css" />
+</head>
+<body>
+
+<!-- ── MAIN ── -->
+<div class="page-header-wrap">
+  <div class="page-header">
+    <h1>Kalkulator Doziranja Sumporne Kiseline</h1>
+    <p>Unesite parametre vašeg bazena kako biste izračunali potrebnu količinu H₂SO₄ (sumporne kiseline) za postizanje ciljanog pH.</p>
+  </div>
+</div>
+<main>
+  <!-- ── LEFT COLUMN ── -->
+  <div class="left-col">
+    <div class="card">
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- Ulazni podaci -->
+        <section class="section">
+          <h2>Ulazni podaci</h2>
+          <div class="field-grid cols-2">
+            <div class="field">
+              <label for="volumenBazena">Volumen bazena [m³]</label>
+              <input id="volumenBazena" type="number" step="0.1" value="42" />
+            </div>
+            <div class="field">
+              <label for="temperaturaVode">Temperatura vode [°C]</label>
+              <div class="select-wrap">
+                <select id="temperaturaVode"></select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider" />
+
+        <!-- pH parametri -->
+        <section class="section">
+          <h2>pH parametri</h2>
+          <div class="field-grid cols-2">
+            <div class="field">
+              <label for="pocetniPh">Početni pH</label>
+              <input id="pocetniPh" type="number" step="0.1" value="9.1" />
+            </div>
+            <div class="field">
+              <label for="ciljniPh">Ciljni pH</label>
+              <div class="select-wrap">
+                <select id="ciljniPh"></select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="section-divider" />
+
+        <!-- Svojstva proizvoda i vode -->
+        <section class="section">
+          <h2>Svojstva proizvoda i vode</h2>
+          <div class="field-grid cols-2">
+            <div class="field">
+              <label for="koncentracija">Koncentracija H₂SO₄ [%]</label>
+              <div class="select-wrap">
+                <select id="koncentracija"></select>
+              </div>
+              <span class="hint">Zadano 15 %, korisnik može promijeniti.</span>
+            </div>
+            <div class="field">
+              <label for="alkalnostTA">Ukupna alkalnost TA [ppm]</label>
+              <div class="select-wrap">
+                <select id="alkalnostTA"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="factor-grid">
+            <div class="factor-chip">
+              <div class="fc-label">ΔpH</div>
+              <div class="fc-value" id="chipDeltaPh">1,90</div>
+            </div>
+            <div class="factor-chip">
+              <div class="fc-label">Faktor temp.</div>
+              <div class="fc-value" id="chipFt">0,97</div>
+            </div>
+            <div class="factor-chip">
+              <div class="fc-label">Faktor alk.</div>
+              <div class="fc-value" id="chipFta">0,70</div>
+            </div>
+            <div class="factor-chip">
+              <div class="fc-label">Konst. K</div>
+              <div class="fc-value" id="chipK">0,336</div>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/>
+            </svg>
+            <span>Model je empirijski i najtočniji za TA 80–140 ppm.</span>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button class="btn-calc" onclick="izracunaj()">Izračunaj</button>
+          <div class="secondary-actions">
+            <button class="btn-secondary-action" onclick="ocistiSve()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9a9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              Očisti
+            </button>
+            <button class="btn-secondary-action" onclick="window.print()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6M10 9H8m8 4H8m8 4H8"/></svg>
+              Ispis / PDF
+            </button>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-toggle" onclick="toggleDetalji()">Detalji</button>
+            <span class="badge" id="statusBadge">Spremno</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Hidden: Napomena / Formula -->
+    <div class="hidden" id="detailsNapomena">
+      <div class="card">
+        <div class="section">
+          <h2>Napomena o proračunu</h2>
+          <div class="info-box" style="align-items:flex-start;flex-direction:column;gap:12px;">
+            <strong>Formula doziranja sumporne kiseline</strong>
+            <span>V<sub>kiselina</sub> [L] = K × V<sub>b</sub> × ΔpH × f<sub>t</sub> × f<sub>TA</sub></span>
+          </div>
+          <div class="formula-box" id="formulaBox">Formula će biti prikazana nakon izračuna.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT COLUMN ── -->
+  <div class="right-col">
+
+    <!-- Results dark card -->
+    <div class="dark-card">
+      <div class="results-label">Rezultati izračuna</div>
+
+      <div class="result-row">
+        <span class="rk">Volumen bazena</span>
+        <span class="rv" id="mVolumen">–</span>
+      </div>
+      <div class="result-row">
+        <span class="rk">Potrebna količina (mL)</span>
+        <span class="rv" id="mMililitri">–</span>
+      </div>
+
+      <div class="big-power">
+        <div class="power-label">Potrebna količina kiseline</div>
+        <div class="power-value">
+          <span class="power-number" id="mLitri">–</span>
+          <span class="power-unit">L</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catalog card -->
+    <div class="card catalog-card">
+      <div class="catalog-header">
+        <h3>IVAPOOL pakiranja sumporne kiseline</h3>
+        <span class="catalog-badge">Asortiman</span>
+      </div>
+      <div class="catalog-cols">
+        <span>Šifra</span>
+        <span>Naziv</span>
+        <span style="text-align:right">Pakiranje</span>
+        <span style="text-align:right">Status</span>
+      </div>
+      <div id="catalogBody"></div>
+      <div class="catalog-actions">
+        <button class="btn-catalog-action" onclick="toggleDetalji()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+          Detalji
+        </button>
+      </div>
+    </div>
+
+    <!-- Hidden: Detaljna tablica -->
+    <div class="hidden" id="detailsTablica">
+      <div class="card">
+        <h2 style="font-size:15px;font-weight:600;margin-bottom:16px;">Detaljna tablica izračuna</h2>
+        <div class="table-wrap">
+          <table id="rezultatTablica">
+            <thead><tr><th>Stavka</th><th>Vrijednost</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="h2so4.js"></script>
+<footer class="disclaimer">
+  Sumporna kiselina je nagrizajuća kemikalija — pri rukovanju obavezno koristite zaštitnu opremu (naočale, rukavice) i dodajte kiselinu u vodu, nikada obrnuto. Prikazani rezultat je empirijska aproksimacija i služi kao informativna preporuka doziranja. Nakon doziranja pričekajte cirkulaciju i ponovno izmjerite pH prije daljnjeg podešavanja.
+</footer>
+</body>
+</html>
