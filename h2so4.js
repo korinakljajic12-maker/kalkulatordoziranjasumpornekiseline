@@ -139,7 +139,6 @@
     const kolicinaMl = kolicinaL * 1000;
 
     $('mVolumen').textContent = `${fmt(volumen,1)} m³`;
-    $('mMililitri').textContent = `${fmt(kolicinaMl,0)} mL`;
     $('mLitri').textContent = `${fmt(kolicinaL,3)}`;
 
     $('formulaBox').innerHTML = `<strong>Primijenjena formula</strong><br><br>`
@@ -152,7 +151,7 @@
       +`Koncentracija H₂SO₄ c = <strong>${fmt(koncentracija,0)} %</strong><br>`
       +`Konstanta K = 0,14 × (36 / c) = <strong>${fmt(K,3)}</strong><br><br>`
       +`Potrebna količina V = <strong>${fmt(kolicinaL,3)} L</strong> (= ${fmt(kolicinaMl,0)} mL)<br><br>`
-      +`<em>Napomena: model je empirijski i najtočniji za TA 80–140 ppm.</em>`;
+      +`<em>Napomena: model je empirijski i najtočniji za TA 80–140 ppm. Za druge koncentracije koristi skaliranje 36/%.</em>`;
 
     renderRows([
       ['Volumen bazena (V_b)',`${fmt(volumen,1)} m³`],
@@ -196,7 +195,7 @@
     $('ciljniPh').value='7.2';
     $('koncentracija').value='15';
     $('alkalnostTA').value='70';
-    $('mVolumen').textContent='-'; $('mMililitri').textContent='-'; $('mLitri').textContent='-';
+    $('mVolumen').textContent='-'; $('mLitri').textContent='-';
     $('formulaBox').textContent='Formula će biti prikazana nakon izračuna.';
     renderRows([]);
     renderCatalog(null,null);
